@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">labsOne_AWARE</string>
+    <string name="acc_title">Accelerometer</string>
+    <string name="acc_x_title">X:</string>
+    <string name="zero_value">0</string>
+    <string name="acc_y_title">Y:</string>
+    <string name="acc_z_title">Z:</string>
+    <string name="temp_title">Temperature</string>
+    <string name="degrees_label">Degrees (C):</string>
+</resources>

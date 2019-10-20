@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:layout_margin="8dp" android:orientation="vertical" tools:context=".MainActivity">
+        <TextView android:id="@+id/tv_acc_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/acc_title" android:textSize="24sp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView android:id="@+id/tv_acc_x_label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/acc_x_title"/>
+            <TextView android:id="@+id/tv_acc_x_value" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/zero_value"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView android:id="@+id/tv_acc_y_label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/acc_y_title"/>
+            <TextView android:id="@+id/tv_acc_y_value" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/zero_value"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView android:id="@+id/tv_acc_z_label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/acc_z_title"/>
+            <TextView android:id="@+id/tv_acc_z_value" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/zero_value"/>
+        </LinearLayout>
+        <Space android:layout_width="match_parent" android:layout_height="15sp"/>
+        <TextView android:id="@+id/tv_temp_title" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/temp_title" android:textSize="24sp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <TextView android:id="@+id/tv_temp_label" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/degrees_label"/>
+            <TextView android:id="@+id/tv_temp_value" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/zero_value"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
