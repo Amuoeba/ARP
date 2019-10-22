@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
 
     private static final int PERMISSION_RECORD_AUDIO = 0;
+    Thread mThread;
 
     @Override
     public void onRequestPermissionsResult(int requestCode,  String[] permissions,  int[] grantResults) {
@@ -80,30 +81,43 @@ public class MainActivity extends AppCompatActivity {
                 tvAccXValue.setText(x);
             });
 
-            int audioSource = MediaRecorder.AudioSource.MIC;
-            int samplingRate = 11025;
-            int channelConfig = AudioFormat.CHANNEL_IN_DEFAULT;
-            int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
-            int bufferSize = AudioRecord.getMinBufferSize(samplingRate,channelConfig,audioFormat);
+            mThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    record();
+                }
+            });
+            mThread.start();
+        }
+    }
 
-            short[] buffer = new short[bufferSize/4];
-            AudioRecord myRecord = new AudioRecord(audioSource,samplingRate,channelConfig,audioFormat,bufferSize);
+    private void record(){
+        int audioSource = MediaRecorder.AudioSource.MIC;
+        int samplingRate = 11025;
+        int channelConfig = AudioFormat.CHANNEL_IN_DEFAULT;
+        int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
+        int bufferSize = AudioRecord.getMinBufferSize(samplingRate,channelConfig,audioFormat);
 
-            myRecord.startRecording();
+        short[] buffer = new short[bufferSize/4];
+        AudioRecord myRecord = new AudioRecord(audioSource,samplingRate,channelConfig,audioFormat,bufferSize);
 
+        myRecord.startRecording();
+
+        int noAllRead = 0;
+        while(true){
             int bufferResults = myRecord.read(buffer,0,bufferSize/4);
-
+            noAllRead += bufferResults;
+            int ii = noAllRead;
             for (int i = 0;i<bufferResults;i++){
+                int val = buffer[i];
                 runOnUiThread(()->{
                     TextView raw_value = findViewById(R.id.sensor_value);
-                    raw_value.setText(Arrays.toString(buffer));
+                    raw_value.setText(String.valueOf(val));
+                    TextView no_read = findViewById(R.id.no_read_val);
+                    no_read.setText(String.valueOf(ii));
                 });
             }
+
         }
-
-
-
-
-
     }
 }

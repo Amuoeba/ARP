@@ -5,4 +5,6 @@
     <string name="sensor_value">0</string>
     <string name="raw_available_title">Raw available:</string>
     <string name="raw_available">Default</string>
+    <string name="no_read_title">No. read:</string>
+    <string name="no_read_val">0</string>
 </resources>
