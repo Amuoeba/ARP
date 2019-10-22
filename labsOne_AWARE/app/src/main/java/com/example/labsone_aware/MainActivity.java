@@ -83,12 +83,8 @@ public class MainActivity extends AppCompatActivity {
                         tempField.setText(Double.toString(temp));
                     }
                 });
-
-
             }
         };
-
-
 
         Temperature.setSensorObserver(tempObserver);
         Accelerometer.setSensorObserver(mySensorObserver);
