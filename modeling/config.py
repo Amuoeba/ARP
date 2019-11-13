@@ -2,4 +2,8 @@
 
 # Imports from internal libraries
 
-data_root = "/run/media/erik/DECC6FC7CC6F9913/DataWarehouse/VoxCeleb/dev/dev/aac/"
+DATA_ROOT = "/run/media/erik/A0BE428BBE425A44/DataWearhouseFast/VoxCeleb/"
+TRAIN_DATA = f"{DATA_ROOT}" + "dev/dev/aac"
+TEST_DATA = f"{DATA_ROOT}" + "test/aac"
+DATABASE = f"{DATA_ROOT}" + "test.db"
+

@@ -16,6 +16,12 @@ import android.media.AudioManager;
 import android.media.AudioFormat;
 import android.os.Bundle;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
+import com.anand.brose.graphviewlibrary.GraphView;
+import com.anand.brose.graphviewlibrary.WaveSample;
 
 
 import java.util.Arrays;
@@ -30,6 +36,16 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int PERMISSION_RECORD_AUDIO = 0;
     Thread mThread;
+
+
+    private AudioRecordingThread recThread;
+
+
+
+
+    private List<WaveSample> pointList = new ArrayList<>();
+    private long startTime = 0;
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode,  String[] permissions,  int[] grantResults) {
@@ -47,6 +63,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+        GraphView graphView = findViewById(R.id.graphView);
+        graphView.setMaxAmplitude(15000);
+        graphView.setMasterList(pointList);
+        graphView.startPlotting();
+
+
 
         if(ContextCompat.checkSelfPermission(this,Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED){
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
@@ -81,6 +105,22 @@ public class MainActivity extends AppCompatActivity {
                 tvAccXValue.setText(x);
             });
 
+//            recThread = new AudioRecordingThread(new AudoRecievedListener() {
+//                @Override
+//                public void onAudioDataReceived(short[] data) {
+//                    for (int i = 0;i<data.length;i=i*10){
+//                        int val = data[i];
+//                        runOnUiThread(()->{
+//                            TextView raw_value = findViewById(R.id.sensor_value);
+//                            raw_value.setText(String.valueOf(val));
+//
+//                        });
+//                    }
+//                }
+//            });
+//            recThread.startRecording();
+
+
             mThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -93,30 +133,54 @@ public class MainActivity extends AppCompatActivity {
 
     private void record(){
         int audioSource = MediaRecorder.AudioSource.MIC;
-        int samplingRate = 11025;
-        int channelConfig = AudioFormat.CHANNEL_IN_DEFAULT;
+        int samplingRate = 16000;
+        int channelConfig = AudioFormat.CHANNEL_IN_MONO;
         int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
         int bufferSize = AudioRecord.getMinBufferSize(samplingRate,channelConfig,audioFormat);
+//        bufferSize=samplingRate*2;
 
-        short[] buffer = new short[bufferSize/4];
+        short[] buffer = new short[bufferSize/2];
         AudioRecord myRecord = new AudioRecord(audioSource,samplingRate,channelConfig,audioFormat,bufferSize);
 
         myRecord.startRecording();
 
+        runOnUiThread(()->{
+            TextView sample_rate = findViewById(R.id.sample_rate);
+            sample_rate.setText(String.valueOf(samplingRate));
+            TextView buffer_size = findViewById(R.id.buffer_size);
+            buffer_size.setText(String.valueOf(buffer.length));
+        });
+
         int noAllRead = 0;
+
+        startTime = System.currentTimeMillis();
+
+
         while(true){
-            int bufferResults = myRecord.read(buffer,0,bufferSize/4);
+//            myRecord.startRecording();
+            int bufferResults = myRecord.read(buffer,0,buffer.length);
+//            myRecord.stop();
             noAllRead += bufferResults;
             int ii = noAllRead;
-            for (int i = 0;i<bufferResults;i++){
-                int val = buffer[i];
-                runOnUiThread(()->{
-                    TextView raw_value = findViewById(R.id.sensor_value);
-                    raw_value.setText(String.valueOf(val));
-                    TextView no_read = findViewById(R.id.no_read_val);
-                    no_read.setText(String.valueOf(ii));
-                });
+
+            runOnUiThread(()->{
+                TextView no_read = findViewById(R.id.no_read_val);
+                no_read.setText(String.valueOf(ii));
+            });
+//            pointList.add(new WaveSample(System.currentTimeMillis()-startTime,buffer[0]));
+            if(noAllRead%(buffer.length) == 0){
+                for (int i = 0;i<bufferResults;i++){
+                    int val = buffer[i];
+//                    runOnUiThread(()->{
+//                        TextView raw_value = findViewById(R.id.sensor_value);
+//                        raw_value.setText(String.valueOf(val));
+//
+//                    });
+                    pointList.add(new WaveSample(System.currentTimeMillis()-startTime,val));
+                }
             }
+
+
 
         }
     }
