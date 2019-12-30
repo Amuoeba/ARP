@@ -26,6 +26,7 @@ class SpectrogramPairsDataset(Dataset):
 
 if __name__ == '__main__':
     print("Testing dataset functionality")
+    torch.jit.trace()
 
     test_dataset = SpectrogramPairsDataset(config.TRAIN_DATA)
     print(test_dataset._get_num_files_())

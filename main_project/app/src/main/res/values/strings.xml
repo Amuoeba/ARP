@@ -11,4 +11,5 @@
     <string name="sample_rate">0</string>
     <string name="buffer_size_title">Buffer size:</string>
     <string name="buffer_size">0</string>
+    <string name="is_speech_value">Empty</string>
 </resources>
