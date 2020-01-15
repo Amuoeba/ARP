@@ -3,11 +3,14 @@ package com.example.mainproject;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.app.ActivityCompat;
+
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.Manifest;
 import android.content.Context;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -15,6 +18,11 @@ import android.media.AudioManager;
 import android.media.AudioFormat;
 import android.os.Bundle;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +32,7 @@ import com.anand.brose.graphviewlibrary.WaveSample;
 
 import com.konovalov.vad.VadConfig;
 
-
+import org.pytorch.Module;
 
 
 class DebugUtills {
@@ -50,6 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private boolean permissionToRecordAccepted = false;
     private String [] permissions = {Manifest.permission.RECORD_AUDIO};
     private static final int PERMISSION_RECORD_AUDIO = 0;
+    private Module embedderModule = null;
 
 
     // VAD configuration
@@ -89,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
 
+
         next_button = findViewById(R.id.next1);
         next_button.setOnClickListener(this);
 
@@ -105,7 +115,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .setVoiceDurationMillis(DEFAULT_VOICE_DURATION)
                 .build();
 
-        recorder = new AudioRecordingThread(this,config);
+        loadModule();
+        recorder = new AudioRecordingThread(this,config,embedderModule);
 
 
         GraphView graphView = findViewById(R.id.graphView);
@@ -157,6 +168,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
             mThread.start();
             recorder.start();
+//            recorder.startEmbedder();
         }
     }
 
@@ -168,6 +180,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.next2:
+                Intent startGraph =new Intent(this,EmbeddingGraph.class);
+                startActivity(startGraph);
+
                 System.out.println("Debug: 2 clicked");
                 break;
         }
@@ -195,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     private void record(){
+
         int audioSource = MediaRecorder.AudioSource.MIC;
         int samplingRate = 16000;
         int channelConfig = AudioFormat.CHANNEL_IN_MONO;
@@ -244,4 +260,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
+
+    private void loadModule(){
+        if(embedderModule == null){
+            try{
+                embedderModule = Module.load(assetFilePath(this,"my_traced.pt"));
+            }catch (IOException e) {
+                Log.e("PytorchHelloWorld", "Error reading assets", e);
+            }
+        }
+    }
+
+
+    public static String assetFilePath(Context context, String assetName) throws IOException {
+        File file = new File(context.getFilesDir(), assetName);
+        if (file.exists() && file.length() > 0) {
+            return file.getAbsolutePath();
+        }
+
+        try (InputStream is = context.getAssets().open(assetName)) {
+            try (OutputStream os = new FileOutputStream(file)) {
+                byte[] buffer = new byte[4 * 1024];
+                int read;
+                while ((read = is.read(buffer)) != -1) {
+                    os.write(buffer, 0, read);
+                }
+                os.flush();
+            }
+            return file.getAbsolutePath();
+        }
+    }
+
 }
